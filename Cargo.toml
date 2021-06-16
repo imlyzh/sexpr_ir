@@ -1,8 +1,11 @@
 [package]
 name = "sexpr_ir"
+license = "MIT"
 version = "0.1.0"
-authors = ["enter <enterindex@gmail.com>"]
+authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2018"
+
+description = "A Generic S-Expression IR Library"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
