@@ -1,5 +1,6 @@
-use crate::values::Symbol;
-use crate::{syntax::parser::ParseError, values::Handle};
+use crate::gast::symbol::Symbol;
+use crate::gast::Handle;
+
 
 #[derive(Debug)]
 pub enum SyntaxMatchError {
@@ -13,8 +14,8 @@ pub enum SyntaxMatchError {
 }
 
 #[derive(Debug)]
-pub enum CompilerError {
-    ParseError(ParseError),
+pub enum CompilerError<T> {
+    ParseError(T),
     SyntaxMatchError(SyntaxMatchError),
 	RepeatedModule(Handle<Symbol>),
     RepeatedMacro(Handle<Symbol>),
