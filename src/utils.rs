@@ -3,7 +3,8 @@ use std::{iter::FromIterator, sync::Mutex};
 
 use lazy_static::lazy_static;
 
-use crate::{error::{RuntimeError, SyntaxMatchError}, values::{Handle, Symbol}};
+use crate::gast::Handle;
+
 
 lazy_static! {
     static ref GLOBAL_INTERN_STRING_POOL: Mutex<HashMap<Handle<String>, Handle<String>>> =
@@ -73,6 +74,7 @@ pub fn escape_str(i: &str) -> String {
     String::from_iter(char_string.iter())
 }
 
+/*
 #[inline]
 pub fn str2char(i: &str) -> char {
     i.chars().next().unwrap()
@@ -83,3 +85,4 @@ pub fn match_error(keyword: &Handle<Symbol>) -> RuntimeError {
 	RuntimeError::SyntaxError(
 		SyntaxMatchError::SyntaxMatchError(keyword.clone()))
 }
+*/
