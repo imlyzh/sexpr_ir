@@ -1,10 +1,12 @@
 use std::{fmt::Display, hash::Hash};
+use serde::{Serialize, Deserialize};
 
 use super::Handle;
 use crate::utils::string_intern;
 
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub struct Localation {
     pub line: usize,
     pub colum: usize,
@@ -19,6 +21,7 @@ impl Localation {
 
 
 #[derive(Debug, Clone, Eq)]
+#[derive(Serialize, Deserialize)]
 pub struct Symbol (Handle<String>, Localation);
 
 impl Symbol {

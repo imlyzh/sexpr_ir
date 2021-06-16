@@ -3,7 +3,7 @@ pub mod list;
 pub mod pair;
 
 use std::{collections::HashMap, fmt::{Debug, Display}, sync::Arc};
-
+use serde::{Serialize, Deserialize};
 
 use self::{
     list::List,
@@ -16,6 +16,7 @@ pub type Handle<T> = Arc<T>;
 
 
 #[derive(Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub enum GAst {
     Nil,
     Bool(bool),
@@ -30,6 +31,7 @@ pub enum GAst {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+// #[derive(Serialize, Deserialize)]
 pub struct Record (pub HashMap<Handle<Symbol>, GAst>);
 
 macro_rules! impl_is_type {

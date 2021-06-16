@@ -11,9 +11,10 @@ repl_unit = { !EOI ~ sexpr ~ EOI }
 sexpr =
 	{ list
     | pair
+    | quote
 	| nil_lit
 	| bool_lit
-	| char_lit
+	// | char_lit
 	| string_lit
 	| float_lit
 	| int_lit
@@ -30,6 +31,8 @@ pair =
     { "(" ~ sexpr ~ "." ~ sexpr ~ ")"
     | "[" ~ sexpr ~ "." ~ sexpr ~ "]"
     }
+
+quote = ${ "\'" ~ sexpr }
 
 float_lit = @{ int_lit ~ "." ~ uint_lit? }
 
@@ -58,7 +61,7 @@ kw_true = _ { "true" }
 
 string_lit = @ { "\"" ~ (escape | (!("\\" | "\"") ~ ANY)+)* ~ "\""}
 
-char_lit = @ { "\'" ~ (escape | ANY) ~ "\'" }
+// char_lit = @ { "\'" ~ (escape | ANY) ~ "\'" }
 
 escape = _{ "\\\\"
 		  | "\\\""
@@ -68,18 +71,21 @@ escape = _{ "\\\\"
 		  | "\\t"
 		  }
 
-symbol = ${ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]") ~ ANY)+ }
+symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | ".") ~ ANY)+ }
 
 
-line_comment = _{
+line_comment = _ {
 	";" ~ (!NEWLINE ~ ANY)* ~ NEWLINE?
 }
 
-block_comment = _{
+block_comment = _ {
 	"{" ~ (block_comment | (!"}" ~ ANY))* ~ "}"
 }
 
-COMMENT = _{ line_comment | block_comment }
+COMMENT = _
+    { line_comment
+    | block_comment
+    }
 
 WHITESPACE = _
 	{ " "

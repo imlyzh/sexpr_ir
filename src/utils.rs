@@ -74,12 +74,12 @@ pub fn escape_str(i: &str) -> String {
     String::from_iter(char_string.iter())
 }
 
+/*
 #[inline]
 pub fn str2char(i: &str) -> char {
     i.chars().next().unwrap()
 }
 
-/*
 #[inline]
 pub fn match_error(keyword: &Handle<Symbol>) -> RuntimeError {
 	RuntimeError::SyntaxError(

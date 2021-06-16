@@ -1,9 +1,11 @@
 use std::fmt::Display;
+use serde::{Serialize, Deserialize};
 
 use super::GAst;
 
 
 #[derive(Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize)]
 pub struct Pair(pub GAst, pub GAst);
 
 impl Display for Pair {
