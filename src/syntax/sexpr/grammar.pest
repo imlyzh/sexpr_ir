@@ -8,31 +8,54 @@ unit = { (!EOI ~ sexpr)* ~ EOI }
 
 repl_unit = { !EOI ~ sexpr ~ EOI }
 
+line_comment = _ {
+	";" ~ (!NEWLINE ~ ANY)* ~ NEWLINE?
+}
+
+/*
+block_comment = _ {
+	"{" ~ (block_comment | (!"}" ~ ANY))* ~ "}"
+}
+*/
+
+symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
+
 sexpr =
 	{ list
     | pair
     | quote
-	| nil_lit
+    | unquote
+	| constant
+    | symbol
+	}
+
+list =
+	{ "(" ~ sexpr* ~ ")"
+	| "[" ~ sexpr* ~ "]"
+    | "{" ~ sexpr* ~ "}"
+	}
+
+pair =
+    { "(" ~ sexpr ~ "." ~ sexpr ~ ")"
+    | "[" ~ sexpr ~ "." ~ sexpr ~ "]"
+    | "{" ~ sexpr ~ "." ~ sexpr ~ "}"
+    }
+
+quote = ${ "\'" ~ sexpr }
+
+unquote = ${ "`" ~ sexpr }
+
+// -------------------------------------------------------
+
+constant =
+    { nil_lit
 	| bool_lit
 	// | char_lit
 	| string_lit
 	| float_lit
 	| int_lit
 	| uint_lit
-	| symbol
-	}
-
-list =
-	{ "(" ~ sexpr* ~ ")"
-	| "[" ~ sexpr* ~ "]"
-	}
-
-pair =
-    { "(" ~ sexpr ~ "." ~ sexpr ~ ")"
-    | "[" ~ sexpr ~ "." ~ sexpr ~ "]"
-    }
-
-quote = ${ "\'" ~ sexpr }
+}
 
 float_lit = @{ int_lit ~ "." ~ uint_lit? }
 
@@ -71,20 +94,9 @@ escape = _{ "\\\\"
 		  | "\\t"
 		  }
 
-symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | ".") ~ ANY)+ }
-
-
-line_comment = _ {
-	";" ~ (!NEWLINE ~ ANY)* ~ NEWLINE?
-}
-
-block_comment = _ {
-	"{" ~ (block_comment | (!"}" ~ ANY))* ~ "}"
-}
-
 COMMENT = _
     { line_comment
-    | block_comment
+    // | block_comment
     }
 
 WHITESPACE = _

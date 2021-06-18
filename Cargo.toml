@@ -15,6 +15,10 @@ description = "A Generic S-Expression IR Library"
 name = "sexpr_ir"
 path = "src/lib.rs"
 
+[[example]]
+name = "parse_sexpr"
+path = "examples/parser_sexpr.rs"
+
 [dependencies]
 pest = "2.1.3"
 pest_derive = "2.1.0"
