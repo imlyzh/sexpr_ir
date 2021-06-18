@@ -86,3 +86,38 @@ pub fn match_error(keyword: &Handle<Symbol>) -> RuntimeError {
 		SyntaxMatchError::SyntaxMatchError(keyword.clone()))
 }
 */
+
+#[macro_export]
+macro_rules! impl_is_type {
+    ($name:ident, $item:ident) => {
+        pub fn $name(&self) -> bool {
+            if let Self::$item(_) = self {
+                true
+            } else {
+                false
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_get_item {
+    ($name:ident, $item:ident, $tp:path) => {
+        pub fn $name(&self) -> Option<$tp> {
+            if let Self::$item(x) = self {
+                Some(x.clone())
+            } else {
+                None
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! fmt_gast_case {
+    ($self:ident, $f:ident, $item:ident) => {
+        if let Self::$item(x) = $self {
+            return $f.write_str(&x.to_string());
+        }
+    };
+}

@@ -5,6 +5,7 @@ use pest::iterators::{Pair, Pairs};
 use pest::Parser;
 use pest_derive::*;
 
+use crate::gast::constant::Constant;
 use crate::gast::list::List;
 use crate::gast::symbol::{Localation, Symbol};
 use crate::{error::CompilerError, utils::escape_str};
@@ -26,31 +27,48 @@ where
 impl ParseFrom<Rule> for GAst {
     fn parse_from(pair: Pair<Rule>) -> Self {
         debug_assert_eq!(pair.as_rule(), Rule::sexpr);
+        let pair = pair.into_inner().next().unwrap();
         match pair.as_rule() {
-            Rule::list => GAst::List(Handle::new(List::parse_from(pair))),
-            Rule::pair => GAst::Pair(Handle::new(pair::Pair::parse_from(pair))),
-            Rule::symbol => GAst::Sym(Handle::new(Symbol::parse_from(pair))),
-            Rule::string_lit => GAst::Str(Handle::new(escape_str(pair.as_str()))),
-            Rule::uint_lit => GAst::Uint(pair.as_str().parse().unwrap()),
-            Rule::int_lit => GAst::Int(pair.as_str().parse().unwrap()),
-            Rule::float_lit => GAst::Float(pair.as_str().parse().unwrap()),
-            Rule::bool_lit => GAst::Bool(pair.as_str().parse().unwrap()),
-            // Rule::char_lit => GAst::Char(str2char(&escape_str(pair.as_str()))),
-            Rule::nil_lit => GAst::Nil,
-            Rule::quote => {
+            Rule::list => Self::List(Handle::new(List::parse_from(pair))),
+            Rule::pair => Self::Pair(Handle::new(pair::Pair::parse_from(pair))),
+            Rule::symbol => Self::Sym(Handle::new(Symbol::parse_from(pair))),
+            Rule::constant => Self::Const(Constant::parse_from(pair)),
+            Rule::quote | Rule::unquote => {
                 let (line, colum) = pair.as_span().start_pos().line_col();
                 let pos = pair.as_span().start_pos().pos();
                 let pos = Localation::new(line, colum, pos);
 
-                let quote = Symbol::from("quote", &pos);
+                let quote = if pair.as_rule() == Rule::quote {
+                    "quote"
+                } else {
+                    "unquote"
+                };
+                let quote = Symbol::from(quote, &pos);
                 let quote = GAst::Sym(Handle::new(quote));
 
                 let value = GAst::parse_from(pair.into_inner().next().unwrap());
 
                 let lst = List(vec![quote, value]);
-                GAst::List(Handle::new(lst))
+                Self::List(Handle::new(lst))
             }
             _ => unreachable!(),
+        }
+    }
+}
+
+impl ParseFrom<Rule> for Constant {
+    fn parse_from(pair: Pair<Rule>) -> Self {
+        debug_assert_eq!(pair.as_rule(), Rule::constant);
+        let pair = pair.into_inner().next().unwrap();
+        match pair.as_rule() {
+            Rule::string_lit => Self::Str(Handle::new(escape_str(pair.as_str()))),
+            Rule::uint_lit => Self::Uint(pair.as_str().parse().unwrap()),
+            Rule::int_lit => Self::Int(pair.as_str().parse().unwrap()),
+            Rule::float_lit => Self::Float(pair.as_str().parse().unwrap()),
+            Rule::bool_lit => Self::Bool(pair.as_str().parse().unwrap()),
+            // Rule::char_lit => Self::Char(str2char(&escape_str(pair.as_str()))),
+            Rule::nil_lit => Self::Nil,
+            _ => unreachable!()
         }
     }
 }
@@ -59,7 +77,6 @@ impl ParseFrom<Rule> for List {
     fn parse_from(pair: Pair<Rule>) -> Self {
         debug_assert_eq!(pair.as_rule(), Rule::list);
         let r = pair.into_inner()
-            .flat_map(|x| x.into_inner())
             .map(GAst::parse_from)
             .collect();
         List(r)
@@ -118,13 +135,8 @@ pub fn file_parse(path: &Path) -> Result<List, CompilerError<ParseError>> {
 
 pub fn repl_parse(input: &str) -> Result<GAst, ParseError> {
     let pair = Cement::parse(Rule::repl_unit, input)?
-        .next()
-        .unwrap()
+        .next().unwrap()
         .into_inner()
-        .next()
-        .unwrap()
-        .into_inner()
-        .next()
-        .unwrap();
+        .next().unwrap();
     Ok(GAst::parse_from(pair))
 }
