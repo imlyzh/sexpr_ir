@@ -26,7 +26,6 @@ sexpr =
     | quote
     | unquote
 	| constant
-    | symbol
 	}
 
 list =
@@ -55,6 +54,7 @@ constant =
 	| float_lit
 	| int_lit
 	| uint_lit
+    | symbol
 }
 
 float_lit = @{ int_lit ~ "." ~ uint_lit? }

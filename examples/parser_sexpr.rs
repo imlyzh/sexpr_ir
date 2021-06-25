@@ -1,4 +1,4 @@
-use sexpr_ir::syntax::sexpr::parser::repl_parse;
+use sexpr_ir::syntax::sexpr::repl_parse;
 
 macro_rules! construct_demo {
     ($e:expr) => {
