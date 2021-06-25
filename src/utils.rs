@@ -121,3 +121,21 @@ macro_rules! fmt_gast_case {
         }
     };
 }
+
+#[macro_export]
+macro_rules! impl_get_constant_type {
+    ($self:ident, $item:ident) => {
+        if let Self::$item(_) = $self {
+            return ConstantType::$item;
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_get_simple_type {
+    ($self:ident, $item:ident) => {
+        if let Self::$item(_) = $self {
+            return SimpleType::$item;
+        }
+    };
+}

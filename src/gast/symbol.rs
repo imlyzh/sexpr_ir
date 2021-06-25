@@ -22,7 +22,7 @@ impl Localation {
 
 #[derive(Debug, Clone, Eq)]
 #[derive(Serialize, Deserialize)]
-pub struct Symbol (Handle<String>, Localation);
+pub struct Symbol (pub Handle<String>, pub Localation);
 
 impl Symbol {
     pub fn new(i: &str) -> Self {
