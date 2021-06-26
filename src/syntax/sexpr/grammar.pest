@@ -18,31 +18,32 @@ block_comment = _ {
 }
 */
 
-symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
-
 sexpr =
 	{ list
-    | pair
     | quote
     | unquote
 	| constant
 	}
 
 list =
-	{ "(" ~ sexpr* ~ ")"
-	| "[" ~ sexpr* ~ "]"
-    | "{" ~ sexpr* ~ "}"
+	{ "(" ~ list_core ~ ")"
+	| "[" ~ list_core ~ "]"
+    | "{" ~ list_core ~ "}"
 	}
 
-pair =
-    { "(" ~ sexpr ~ "." ~ sexpr ~ ")"
-    | "[" ~ sexpr ~ "." ~ sexpr ~ "]"
-    | "{" ~ sexpr ~ "." ~ sexpr ~ "}"
-    }
+list_core = {
+    sexpr* ~ pair_right?
+}
+
+pair_right = {
+    "." ~ sexpr
+}
 
 quote = ${ "\'" ~ sexpr }
 
 unquote = ${ "`" ~ sexpr }
+
+symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
 
 // -------------------------------------------------------
 

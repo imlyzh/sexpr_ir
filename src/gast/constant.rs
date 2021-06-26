@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use serde::{Serialize, Deserialize};
 
-use super::{Handle, symbol::Symbol, types::{ConstantType, GAstType, GetSimpleType, GetType, SimpleType}};
+use super::{Handle, symbol::Symbol};
 
 
 #[derive(Debug, Clone, PartialEq)]
@@ -57,33 +57,5 @@ impl Constant {
     impl_get_item!(get_sym, Sym, Handle<Symbol>);
     pub fn get_nil(&self) -> Option<()> {
         if self.is_nil() { Some(()) } else { None }
-    }
-}
-
-impl Constant {
-    pub fn get_constant_type(&self) -> ConstantType {
-        impl_get_constant_type!(self, Bool);
-        impl_get_constant_type!(self, Char);
-        impl_get_constant_type!(self, Int);
-        impl_get_constant_type!(self, Uint);
-        impl_get_constant_type!(self, Float);
-        impl_get_constant_type!(self, Str);
-        impl_get_constant_type!(self, Sym);
-        if let Self::Nil = self {
-            return ConstantType::Nil;
-        }
-        unreachable!()
-    }
-}
-
-impl GetSimpleType for Constant {
-    fn get_simple_type(&self) -> SimpleType {
-        SimpleType::Const(self.get_constant_type())
-    }
-}
-
-impl GetType for Constant {
-    fn get_type(&self) -> GAstType {
-        GAstType::Const(self.get_constant_type())
     }
 }
