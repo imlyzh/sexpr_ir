@@ -17,7 +17,7 @@ path = "src/lib.rs"
 
 [[example]]
 name = "parse_sexpr"
-path = "examples/parser_sexpr.rs"
+path = "examples/parse_sexpr.rs"
 
 [dependencies]
 pest = "2.1.3"

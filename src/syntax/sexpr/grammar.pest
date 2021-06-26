@@ -39,11 +39,11 @@ pair_right = {
     "." ~ sexpr
 }
 
-quote = ${ "\'" ~ sexpr }
+quote = { "\'" ~ sexpr }
 
-unquote = ${ "`" ~ sexpr }
+unquote = { "`" ~ sexpr }
 
-symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
+symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
 
 // -------------------------------------------------------
 
