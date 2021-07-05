@@ -122,16 +122,16 @@ pub fn parse_unit(pair: Pair<Rule>) -> Option<GAst> {
     }
 }
 
-pub fn parse(input: &str) -> Result<List, ParseError> {
+pub fn parse(input: &str) -> Result<Vec<GAst>, ParseError> {
     let pairs: Pairs<Rule> = Cement::parse(Rule::unit, input)?;
     let result = pairs
         .flat_map(|x| x.into_inner())
         .filter_map(parse_unit)
         .collect();
-    Ok(List(result, None))
+    Ok(result)
 }
 
-pub fn file_parse(path: &Path) -> Result<List, CompilerError<ParseError>> {
+pub fn file_parse(path: &Path) -> Result<Vec<GAst>, CompilerError<ParseError>> {
 	let file_path = Handle::new(Symbol::new(path.to_str().unwrap()));
     let mut f = if let Ok(f) = File::open(path) {
         f
