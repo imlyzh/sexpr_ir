@@ -114,7 +114,6 @@ impl ParseFrom<Rule> for Symbol {
 }
 
 pub fn parse_unit(pair: Pair<Rule>) -> Vec<GAst> {
-    debug_assert_eq!(pair.as_rule(), Rule::unit);
     pair.into_inner().filter_map(|x| match x.as_rule() {
         Rule::sexpr => Some(GAst::parse_from(x)),
         Rule::EOI => None,
