@@ -1,10 +1,12 @@
-use sexpr_ir::syntax::sexpr::repl_parse;
+use sexpr_ir::syntax::sexpr::{repl_parse, parse};
 
 macro_rules! construct_demo {
     ($e:expr) => {
-        let r = repl_parse($e).unwrap();
         println!("input: {}", $e);
-        println!("output: {}", r);
+        let r = repl_parse($e).unwrap();
+        println!("repl_parse: {}", r);
+        let r = parse($e).unwrap();
+        println!("unit_parse: {:?}", r);
     };
 }
 

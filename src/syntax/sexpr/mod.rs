@@ -113,20 +113,19 @@ impl ParseFrom<Rule> for Symbol {
     }
 }
 
-pub fn parse_unit(pair: Pair<Rule>) -> Option<GAst> {
-    debug_assert_eq!(pair.as_rule(), Rule::unit);
-    match pair.as_rule() {
-        Rule::sexpr => Some(GAst::parse_from(pair.clone().into_inner().next().unwrap())),
+pub fn parse_unit(pair: Pair<Rule>) -> Vec<GAst> {
+    pair.into_inner().filter_map(|x| match x.as_rule() {
+        Rule::sexpr => Some(GAst::parse_from(x)),
         Rule::EOI => None,
-        _ => unreachable!(),
-    }
+        _ => unreachable!()
+    }).collect()
 }
+
 
 pub fn parse(input: &str) -> Result<Vec<GAst>, ParseError> {
     let pairs: Pairs<Rule> = Cement::parse(Rule::unit, input)?;
     let result = pairs
-        .flat_map(|x| x.into_inner())
-        .filter_map(parse_unit)
+        .flat_map(parse_unit)
         .collect();
     Ok(result)
 }
