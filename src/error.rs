@@ -20,7 +20,7 @@ pub enum CompilerError<T> {
 	RepeatedModule(Handle<Symbol>),
     RepeatedMacro(Handle<Symbol>),
 	RepeatedFunction(Handle<Symbol>),
-	FileOpenError(Handle<Symbol>),
+	FileOpenError(Handle<String>),
 }
 
 #[derive(Debug)]
