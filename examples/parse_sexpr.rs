@@ -1,11 +1,12 @@
 use sexpr_ir::syntax::sexpr::{repl_parse, parse};
+use sexpr_ir::utils::string_intern;
 
 macro_rules! construct_demo {
     ($e:expr) => {
         println!("input: {}", $e);
         let r = repl_parse($e).unwrap();
         println!("repl_parse: {}", r);
-        let r = parse($e).unwrap();
+        let r = parse($e, string_intern("<input>")).unwrap();
         println!("unit_parse: {:?}", r);
     };
 }
