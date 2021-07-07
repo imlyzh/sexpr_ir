@@ -15,6 +15,9 @@ fn main() {
     construct_demo!("foo");
     construct_demo!("'bar");
     construct_demo!("`bar");
+    construct_demo!("nil");
+    construct_demo!("true");
+    construct_demo!("false");
     construct_demo!("()");
     construct_demo!("(if blabla then blabla else blabla)");
     construct_demo!("(assert henghengheng 114514)");

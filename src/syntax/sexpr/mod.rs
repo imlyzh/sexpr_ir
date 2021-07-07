@@ -58,7 +58,11 @@ impl ParseFrom<Rule> for GAst {
 impl ParseFrom<Rule> for Constant {
     fn parse_from(pair: Pair<Rule>, path: Handle<String>) -> Self {
         debug_assert_eq!(pair.as_rule(), Rule::constant);
-        let pair = pair.into_inner().next().unwrap();
+        let pair = if let Some(x) = pair.into_inner().next() {
+            x
+        } else {
+            return Constant::Nil;
+        };
         match pair.as_rule() {
             Rule::symbol => Self::Sym(Handle::new(Symbol::parse_from(pair, path))),
             Rule::string_lit => Self::Str(Handle::new(escape_str(&pair.as_str()[1..pair.as_str().len()-1]))),
