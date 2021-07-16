@@ -151,10 +151,14 @@ pub fn file_parse(path: &str) -> Result<Vec<GAst>, CompilerError<ParseError>> {
 }
 
 pub fn repl_parse(input: &str) -> Result<GAst, ParseError> {
-    let file_path = Handle::new(Symbol::new("<stdin>"));
+    one_unit_parse(input, "<stdin>")
+}
+
+pub fn one_unit_parse(input: &str, path: &str) -> Result<GAst, ParseError> {
+    let path = Handle::new(Symbol::new(path));
     let pair = Cement::parse(Rule::repl_unit, input)?
         .next().unwrap()
         .into_inner()
         .next().unwrap();
-    Ok(GAst::parse_from(pair, file_path.0.clone()))
+    Ok(GAst::parse_from(pair, path.0.clone()))
 }

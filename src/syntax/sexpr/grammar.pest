@@ -48,14 +48,13 @@ symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "(" | ")" | "[" | "]" 
 // -------------------------------------------------------
 
 constant =
-    { nil_lit
-	| bool_lit
-	// | char_lit
-	| string_lit
+    { string_lit
 	| float_lit
 	| int_lit
 	| uint_lit
     | symbol
+    | bool_lit
+    | nil_lit
 }
 
 float_lit = @{ int_lit ~ "." ~ uint_lit? }

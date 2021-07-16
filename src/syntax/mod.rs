@@ -1,2 +1,2 @@
 pub mod sexpr;
-// pub mod mexpr;
+pub mod mexpr;
