@@ -1,17 +1,16 @@
-use sexpr_ir::syntax::sexpr::{repl_parse, parse};
-use sexpr_ir::utils::string_intern;
+use sexpr_ir::syntax::sexpr::{one_unit_parse};
+
 
 macro_rules! construct_demo {
     ($e:expr) => {
         println!("input: {}", $e);
-        let r = repl_parse($e).unwrap();
-        println!("repl_parse: {}", r);
-        let r = parse($e, string_intern("<input>")).unwrap();
-        println!("unit_parse: {:?}", r);
+        let r = one_unit_parse($e, "<examples>").unwrap();
+        println!("parse: {:?}", r);
     };
 }
 
 fn main() {
+    // /*
     construct_demo!("foo");
     construct_demo!("'bar");
     construct_demo!("`bar");
@@ -39,4 +38,7 @@ fn main() {
         [d -2.1]
         '(a b c . e)
         `(+ a b c d))");
+    // */
+    construct_demo!("
+    (foo bar ...)");
 }

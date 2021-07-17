@@ -32,7 +32,7 @@ list =
 	}
 
 list_core = {
-    sexpr* ~ pair_right?
+    (sexpr ~ (!pair_right ~ sexpr)* ~ pair_right?)?
 }
 
 pair_right = {
@@ -43,7 +43,7 @@ quote = { "\'" ~ sexpr }
 
 unquote = { "`" ~ sexpr }
 
-symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "(" | ")" | "[" | "]" | "{" | "}" | ".") ~ ANY)+ }
+symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
 
 // -------------------------------------------------------
 
