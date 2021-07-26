@@ -36,7 +36,7 @@ list_core = {
 }
 
 pair_right = {
-    "." ~ sexpr
+    "." ~ WHITESPACE ~ sexpr
 }
 
 quote = { "\'" ~ sexpr }
