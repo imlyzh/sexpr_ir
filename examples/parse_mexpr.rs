@@ -19,7 +19,7 @@ fn main() {
     construct_demo!("{}");
     construct_demo!("if[cond; then; else]");
     construct_demo!("case[cond; then; else]");
-    construct_demo!("assert[henghengheng; 114514]");
+    construct_demo!("assert(henghengheng, 114514)");
     construct_demo!("doc[\"document\"]");
     construct_demo!("{1, 2 ,3}");
     construct_demo!("(1, 2, 3)");

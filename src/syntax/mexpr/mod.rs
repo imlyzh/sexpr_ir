@@ -32,6 +32,7 @@ impl ParseFrom<Rule> for GAst {
         let first = parse_expr(first, path.clone());
         if r.len() == 2 {
             let last = r.last().unwrap().clone();
+            let last = last.into_inner().next().unwrap();
             let mut last = parse_list(last, path);
             let mut r = [first].to_vec();
             r.append(&mut last);

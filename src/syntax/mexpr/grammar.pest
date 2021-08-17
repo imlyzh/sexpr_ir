@@ -18,7 +18,7 @@ block_comment = _ {
 }
 */
 
-sexpr = { expr ~ list? }
+sexpr = { expr ~ quote? }
 
 expr =
 	{ constant
