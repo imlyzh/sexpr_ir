@@ -1,7 +1,7 @@
 [package]
 name = "sexpr_ir"
 license = "MIT"
-version = "0.4.4"
+version = "0.5.0"
 authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2018"
 readme = "README.md"
@@ -18,6 +18,10 @@ path = "src/lib.rs"
 [[example]]
 name = "parse_sexpr"
 path = "examples/parse_sexpr.rs"
+
+[[example]]
+name = "parse_mexpr"
+path = "examples/parse_mexpr.rs"
 
 [dependencies]
 pest = "2.1.3"
