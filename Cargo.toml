@@ -19,6 +19,10 @@ path = "src/lib.rs"
 name = "parse_sexpr"
 path = "examples/parse_sexpr.rs"
 
+[[example]]
+name = "parse_mexpr"
+path = "examples/parse_mexpr.rs"
+
 [dependencies]
 pest = "2.1.3"
 pest_derive = "2.1.0"

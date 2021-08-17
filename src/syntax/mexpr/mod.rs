@@ -1,4 +1,3 @@
-use std::vec;
 use std::{fs::File, io::Read};
 
 use pest::error::Error;
@@ -13,7 +12,7 @@ use crate::{error::CompilerError, utils::escape_str};
 use crate::gast::*;
 
 #[derive(Parser)]
-#[grammar = "./syntax/sexpr/grammar.pest"]
+#[grammar = "./syntax/mexpr/grammar.pest"]
 pub struct Cement {}
 
 pub type ParseError = Error<Rule>;
@@ -28,31 +27,55 @@ where
 impl ParseFrom<Rule> for GAst {
     fn parse_from(pair: Pair<Rule>, path: Handle<String>) -> Self {
         debug_assert_eq!(pair.as_rule(), Rule::sexpr);
-        let pair = pair.into_inner().next().unwrap();
-        match pair.as_rule() {
-            Rule::list => Self::List(Handle::new(List::parse_from(pair, path))),
-            Rule::constant => Self::Const(Constant::parse_from(pair, path)),
-            Rule::quote | Rule::unquote => {
-                let (line, colum) = pair.as_span().start_pos().line_col();
-                let pos = pair.as_span().start_pos().pos();
-                let pos = Location::new(path.clone(), line, colum, pos);
-
-                let quote = if pair.as_rule() == Rule::quote {
-                    "quote"
-                } else {
-                    "unquote"
-                };
-                let quote = Symbol::from(quote, &pos);
-                let quote = GAst::Const(Constant::Sym(Handle::new(quote)));
-
-                let value = GAst::parse_from(pair.into_inner().next().unwrap(), path);
-
-                let lst = List(vec![quote, value], None);
-                Self::List(Handle::new(lst))
-            }
-            _ => unreachable!(),
+        let r: Vec<_> = pair.into_inner().collect();
+        let first = r.first().unwrap().clone();
+        let first = parse_expr(first, path.clone());
+        if r.len() == 2 {
+            let last = r.last().unwrap().clone();
+            let mut last = parse_list(last, path);
+            let mut r = [first].to_vec();
+            r.append(&mut last);
+            GAst::List(Handle::new(List(r, None)))
+        } else {
+            first
         }
     }
+}
+
+fn parse_expr(pair: Pair<Rule>, path: Handle<String>) -> GAst {
+    debug_assert_eq!(pair.as_rule(), Rule::expr);
+    let pair = pair.into_inner().next().unwrap();
+    match pair.as_rule() {
+        Rule::quote => parse_quote(pair, path),
+        Rule::constant => GAst::Const(Constant::parse_from(pair, path)),
+        _ => unreachable!()
+    }
+}
+
+fn parse_quote(pair: Pair<Rule>, path: Handle<String>) -> GAst {
+    debug_assert_eq!(pair.as_rule(), Rule::quote);
+    let (line, colum) = pair.as_span().start_pos().line_col();
+    let pos = pair.as_span().start_pos().pos();
+
+    let pair = pair.into_inner().next().unwrap();
+    let sym = match pair.as_rule() {
+        Rule::list => "list",
+        Rule::tuple => "tuple",
+        Rule::array => "array",
+        _ => unreachable!()
+    };
+    let mut r = parse_list(pair, path.clone());
+    let pos = Location::new(path, line, colum, pos);
+    let first = Symbol::from(sym, &pos);
+    let first = GAst::Const(Constant::Sym(Handle::new(first)));
+    let mut first = [first].to_vec();
+    first.append(&mut r);
+    GAst::List(Handle::new(List(first, None)))
+}
+
+#[inline]
+fn parse_list(pair: Pair<Rule>, path: Handle<String>) -> Vec<GAst> {
+    pair.into_inner().map(|x| GAst::parse_from(x, path.clone())).collect()
 }
 
 impl ParseFrom<Rule> for Constant {
@@ -73,36 +96,6 @@ impl ParseFrom<Rule> for Constant {
             // Rule::char_lit => Self::Char(str2char(&escape_str(pair.as_str()))),
             Rule::nil_lit => Self::Nil,
             _ => unreachable!()
-        }
-    }
-}
-
-impl ParseFrom<Rule> for List {
-    fn parse_from(pair: Pair<Rule>, path: Handle<String>) -> Self {
-        debug_assert_eq!(pair.as_rule(), Rule::list);
-        let pair = pair.into_inner().next().unwrap();
-        debug_assert_eq!(pair.as_rule(), Rule::list_core);
-        let r: Vec<_> = pair.into_inner().collect();
-        match r.len() {
-            1 => List(vec![GAst::parse_from(r.get(0).unwrap().clone(), path)], None),
-            x if x > 1 => {
-                let mut list: Vec<_> = r[..r.len()-1].iter()
-                .cloned()
-                .map(|x|GAst::parse_from(x, path.clone()))
-                .collect();
-                let pair_right = r.last().unwrap();
-                let pair_right =
-                    if pair_right.as_rule() == Rule::pair_right {
-                        let r = pair_right.clone().into_inner().next().unwrap();
-                        debug_assert_eq!(r.as_rule(), Rule::sexpr);
-                        Some(GAst::parse_from(r, path))
-                    } else {
-                        list.push(GAst::parse_from(pair_right.clone(), path));
-                        None
-                    };
-                List(list, pair_right)
-            }
-            _ => List(vec![], None)
         }
     }
 }

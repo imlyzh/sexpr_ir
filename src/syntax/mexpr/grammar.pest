@@ -9,41 +9,41 @@ unit = { (!EOI ~ sexpr)* ~ EOI }
 repl_unit = { !EOI ~ sexpr ~ EOI }
 
 line_comment = _ {
-	";" ~ (!NEWLINE ~ ANY)* ~ NEWLINE?
+	"#" ~ (!NEWLINE ~ ANY)* ~ NEWLINE?
 }
 
 /*
 block_comment = _ {
-	"{" ~ (block_comment | (!"}" ~ ANY))* ~ "}"
+	"/*" ~ (block_comment | (!"}" ~ ANY))* ~ "*/"
 }
 */
 
-sexpr =
-	{ list
-    | quote
-    | unquote
-	| constant
+sexpr = { expr ~ list? }
+
+expr =
+	{ constant
+	| quote
 	}
 
-list =
-	{ "(" ~ list_core ~ ")"
-	| "[" ~ list_core ~ "]"
-    | "{" ~ list_core ~ "}"
-	}
-
-list_core = {
-    (sexpr ~ (!pair_right ~ sexpr)* ~ pair_right?)?
+quote =
+    { tuple
+    | list
+    | array
 }
 
-pair_right = {
-    "." ~ WHITESPACE ~ sexpr
+list = {
+    "[" ~ (sexpr ~ (";" ~ sexpr)*)? ~ "]"
 }
 
-quote = { "\'" ~ sexpr }
+tuple = {
+    "(" ~ (sexpr ~ ("," ~ sexpr)*)? ~ ")"
+}
 
-unquote = { "`" ~ sexpr }
+array = {
+    "{" ~ (sexpr ~ ("," ~ sexpr)*)? ~ "}"
+}
 
-symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
+symbol = @{ (!(WHITESPACE | keyword | "\"" | ","  | ";" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
 
 // -------------------------------------------------------
 
