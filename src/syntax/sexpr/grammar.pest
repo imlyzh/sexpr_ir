@@ -21,6 +21,8 @@ block_comment = _ {
 sexpr =
 	{ list
     | quote
+    | quasiquote
+    | unquote_splicing
     | unquote
 	| constant
 	}
