@@ -32,15 +32,21 @@ impl ParseFrom<Rule> for GAst {
         match pair.as_rule() {
             Rule::list => Self::List(Handle::new(List::parse_from(pair, path))),
             Rule::constant => Self::Const(Constant::parse_from(pair, path)),
-            Rule::quote | Rule::unquote => {
+            Rule::quote | Rule::unquote | Rule::quasiquote | Rule::unquote_splicing => {
                 let (line, colum) = pair.as_span().start_pos().line_col();
                 let pos = pair.as_span().start_pos().pos();
                 let pos = Location::new(path.clone(), line, colum, pos);
 
                 let quote = if pair.as_rule() == Rule::quote {
                     "quote"
-                } else {
+                } else if pair.as_rule() == Rule::unquote {
                     "unquote"
+                } else if pair.as_rule() == Rule::quasiquote {
+                    "quasiquote"
+                } else if pair.as_rule() == Rule::unquote_splicing {
+                    "unquote-splicing"
+                } else {
+                    unreachable!()
                 };
                 let quote = Symbol::from(quote, &pos);
                 let quote = GAst::Const(Constant::Sym(Handle::new(quote)));
