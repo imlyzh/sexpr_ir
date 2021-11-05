@@ -41,7 +41,7 @@ pair_right = {
 
 quote = { "\'" ~ sexpr }
 
-unquote = { "`" ~ sexpr }
+unquote = { "," ~ sexpr }
 
 symbol = @{ (!(keyword | WHITESPACE | "\"" | "\'" | "`" | "," | "@" | ",@" | "(" | ")" | "[" | "]" | "{" | "}") ~ ANY)+ }
 
