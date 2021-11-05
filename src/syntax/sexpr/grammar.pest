@@ -52,26 +52,35 @@ constant =
 	| float_lit
 	| int_lit
 	| uint_lit
-    | symbol
     | bool_lit
     | nil_lit
+    | symbol
 }
 
-float_lit = @{ int_lit ~ "." ~ uint_lit? }
+int_lit = ${ signed_number ~ !("u" | "f") ~ "i"? }
+uint_lit = ${ number ~ "u" }
+float_lit = ${ float_number ~ "f"? }
 
-int_lit = @{ ("+" | "-")? ~ uint_lit }
+float_number = $
+    { (("+" | "-")? ~ number_hex ~ "." ~ ASCII_HEX_DIGIT+)
+    | (("+" | "-")? ~ number_oct ~ "." ~ ASCII_OCT_DIGIT+)
+    | (("+" | "-")? ~ number_bin ~ "." ~ ASCII_BIN_DIGIT+)
+    | (("+" | "-")? ~ number_dec ~ "." ~ ASCII_DIGIT+)
+}
 
-uint_lit = @{ uns_number_lit }
+signed_number = ${ ("+" | "-")? ~ number }
 
-uns_number_lit = @
-	{ uns_number_hex
-	| uns_number_bin
-	| uns_number_dec
-	}
+number = $
+    { number_hex
+    | number_oct
+    | number_bin
+    | number_dec
+    }
 
-uns_number_dec = _ { ASCII_DIGIT+ }
-uns_number_hex = _ { "0x" ~ ASCII_HEX_DIGIT+ }
-uns_number_bin = _ { "0x" ~ ASCII_BIN_DIGIT+ }
+number_dec = _ { ASCII_DIGIT+ }
+number_oct = _ { "0o" ~ ASCII_OCT_DIGIT+ }
+number_hex = _ { "0x" ~ ASCII_HEX_DIGIT+ }
+number_bin = _ { "0b" ~ ASCII_BIN_DIGIT+ }
 
 keyword = @{ bool_lit | nil_lit }
 
