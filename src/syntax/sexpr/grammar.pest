@@ -33,12 +33,12 @@ list =
     | "{" ~ list_core ~ "}"
 	}
 
-list_core = {
-    (sexpr ~ (!pair_right ~ sexpr)* ~ pair_right?)?
+list_core = ${
+    WHITESPACE* ~ (sexpr ~ (!pair_right ~ WHITESPACE+ ~ sexpr)* ~ pair_right?)? ~ WHITESPACE*
 }
 
-pair_right = {
-    "." ~ WHITESPACE ~ sexpr
+pair_right = ${
+    WHITESPACE+ ~ "." ~ WHITESPACE+ ~ sexpr
 }
 
 quote = { "\'" ~ sexpr }
