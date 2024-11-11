@@ -1,5 +1,4 @@
-use sexpr_ir::syntax::mexpr::{one_unit_parse};
-
+use sexpr_ir::syntax::mexpr::one_unit_parse;
 
 macro_rules! construct_demo {
     ($e:expr) => {

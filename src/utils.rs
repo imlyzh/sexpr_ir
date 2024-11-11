@@ -1,40 +1,39 @@
 use std::collections::{HashMap, VecDeque};
 use std::{iter::FromIterator, sync::Mutex};
 
-use lazy_static::lazy_static;
+// use lazy_static::lazy_static;
 
 use crate::gast::Handle;
 
+// lazy_static! {
+//     static ref GLOBAL_INTERN_STRING_POOL: Mutex<HashMap<Handle<String>, Handle<String>>> =
+//         Mutex::new(HashMap::new());
+// }
 
-lazy_static! {
-    static ref GLOBAL_INTERN_STRING_POOL: Mutex<HashMap<Handle<String>, Handle<String>>> =
-        Mutex::new(HashMap::new());
-}
+// // fast(xD
+// #[macro_export]
+// macro_rules! fast_return {
+// 	($e:expr) => {
+// 		if let Ok(res) = $e {
+// 			return Ok(res);
+// 		}
+// 	};
+// }
 
-// fast(xD
-#[macro_export]
-macro_rules! fast_return {
-	($e:expr) => {
-		if let Ok(res) = $e {
-			return Ok(res);
-		}
-	};
-}
-
-#[inline]
-pub fn string_intern(i: &str) -> Handle<String> {
-    let k = Handle::new(i.to_string());
-    {
-        if let Some(x) = GLOBAL_INTERN_STRING_POOL.lock().unwrap().get(&k) {
-            return x.clone();
-        }
-    }
-    GLOBAL_INTERN_STRING_POOL
-        .lock()
-        .unwrap()
-        .insert(k.clone(), k.clone());
-    k
-}
+// #[inline]
+// pub fn string_intern(i: &str) -> Handle<String> {
+//     let k = Handle::new(i.to_string());
+//     {
+//         if let Some(x) = GLOBAL_INTERN_STRING_POOL.lock().unwrap().get(&k) {
+//             return x.clone();
+//         }
+//     }
+//     GLOBAL_INTERN_STRING_POOL
+//         .lock()
+//         .unwrap()
+//         .insert(k.clone(), k.clone());
+//     k
+// }
 
 #[inline]
 pub fn escape_char(i: char) -> char {
@@ -82,8 +81,8 @@ pub fn str2char(i: &str) -> char {
 
 #[inline]
 pub fn match_error(keyword: &Handle<Symbol>) -> RuntimeError {
-	RuntimeError::SyntaxError(
-		SyntaxMatchError::SyntaxMatchError(keyword.clone()))
+    RuntimeError::SyntaxError(
+        SyntaxMatchError::SyntaxMatchError(keyword.clone()))
 }
 */
 

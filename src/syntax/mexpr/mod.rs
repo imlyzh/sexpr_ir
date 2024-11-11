@@ -8,8 +8,8 @@ use pest_derive::*;
 use crate::gast::constant::Constant;
 use crate::gast::list::List;
 use crate::gast::symbol::{Location, Symbol};
-use crate::{error::CompilerError, utils::escape_str};
 use crate::gast::*;
+use crate::{error::CompilerError, utils::escape_str};
 
 #[derive(Parser)]
 #[grammar = "./syntax/mexpr/grammar.pest"]
@@ -49,7 +49,7 @@ fn parse_expr(pair: Pair<Rule>, path: Handle<String>) -> GAst {
     match pair.as_rule() {
         Rule::quote => parse_quote(pair, path),
         Rule::constant => GAst::Const(Constant::parse_from(pair, path)),
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -63,7 +63,7 @@ fn parse_quote(pair: Pair<Rule>, path: Handle<String>) -> GAst {
         Rule::list => "list",
         Rule::tuple => "tuple",
         Rule::array => "array",
-        _ => unreachable!()
+        _ => unreachable!(),
     };
     let mut r = parse_list(pair, path.clone());
     let pos = Location::new(path, line, colum, pos);
@@ -76,7 +76,9 @@ fn parse_quote(pair: Pair<Rule>, path: Handle<String>) -> GAst {
 
 #[inline]
 fn parse_list(pair: Pair<Rule>, path: Handle<String>) -> Vec<GAst> {
-    pair.into_inner().map(|x| GAst::parse_from(x, path.clone())).collect()
+    pair.into_inner()
+        .map(|x| GAst::parse_from(x, path.clone()))
+        .collect()
 }
 
 impl ParseFrom<Rule> for Constant {
@@ -89,14 +91,16 @@ impl ParseFrom<Rule> for Constant {
         };
         match pair.as_rule() {
             Rule::symbol => Self::Sym(Handle::new(Symbol::parse_from(pair, path))),
-            Rule::string_lit => Self::Str(Handle::new(escape_str(&pair.as_str()[1..pair.as_str().len()-1]))),
+            Rule::string_lit => Self::Str(Handle::new(escape_str(
+                &pair.as_str()[1..pair.as_str().len() - 1],
+            ))),
             Rule::uint_lit => Self::Uint(pair.as_str().parse().unwrap()),
             Rule::int_lit => Self::Int(pair.as_str().parse().unwrap()),
             Rule::float_lit => Self::Float(pair.as_str().parse().unwrap()),
             Rule::bool_lit => Self::Bool(pair.as_str().parse().unwrap()),
             // Rule::char_lit => Self::Char(str2char(&escape_str(pair.as_str()))),
             Rule::nil_lit => Self::Nil,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
@@ -112,36 +116,35 @@ impl ParseFrom<Rule> for Symbol {
 }
 
 pub fn parse_unit(pair: Pair<Rule>, path: Handle<String>) -> Vec<GAst> {
-    pair.into_inner().filter_map(|x| match x.as_rule() {
-        Rule::sexpr => Some(GAst::parse_from(x, path.clone())),
-        Rule::EOI => None,
-        _ => unreachable!()
-    }).collect()
+    pair.into_inner()
+        .filter_map(|x| match x.as_rule() {
+            Rule::sexpr => Some(GAst::parse_from(x, path.clone())),
+            Rule::EOI => None,
+            _ => unreachable!(),
+        })
+        .collect()
 }
-
 
 pub fn parse(input: &str, path: Handle<String>) -> Result<Vec<GAst>, ParseError> {
     let pairs: Pairs<Rule> = Cement::parse(Rule::unit, input)?;
-    let result = pairs
-        .flat_map(|x| parse_unit(x, path.clone()))
-        .collect();
+    let result = pairs.flat_map(|x| parse_unit(x, path.clone())).collect();
     Ok(result)
 }
 
 pub fn file_parse(path: &str) -> Result<Vec<GAst>, CompilerError<ParseError>> {
     use std::path::PathBuf;
     let path_buf = PathBuf::from(path).canonicalize().unwrap();
-	let file_path = Handle::new(Symbol::new(path_buf.to_str().unwrap()));
+    let file_path = Handle::new(Symbol::new(path_buf.to_str().unwrap()));
     let mut f = if let Ok(f) = File::open(path_buf) {
         f
     } else {
         return Err(CompilerError::FileOpenError(file_path.0.clone()));
     };
-	let mut buf = String::new();
+    let mut buf = String::new();
     if f.read_to_string(&mut buf).is_err() {
         return Err(CompilerError::FileOpenError(file_path.0.clone()));
     }
-	parse(&buf, file_path.0.clone()).map_err(CompilerError::ParseError)
+    parse(&buf, file_path.0.clone()).map_err(CompilerError::ParseError)
 }
 
 pub fn repl_parse(input: &str) -> Result<GAst, ParseError> {
@@ -151,8 +154,10 @@ pub fn repl_parse(input: &str) -> Result<GAst, ParseError> {
 pub fn one_unit_parse(input: &str, path: &str) -> Result<GAst, ParseError> {
     let path = Handle::new(Symbol::new(path));
     let pair = Cement::parse(Rule::repl_unit, input)?
-        .next().unwrap()
+        .next()
+        .unwrap()
         .into_inner()
-        .next().unwrap();
+        .next()
+        .unwrap();
     Ok(GAst::parse_from(pair, path.0.clone()))
 }

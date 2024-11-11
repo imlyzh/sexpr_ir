@@ -1,12 +1,11 @@
 use crate::gast::symbol::Symbol;
 use crate::gast::Handle;
 
-
 #[derive(Debug)]
 pub enum SyntaxMatchError {
     MatchError,
     MatchListSizeError,
-	SyntaxRuleIsNotExist,
+    SyntaxRuleIsNotExist,
     ExtendInMiddleError(Handle<Symbol>),
     RepeatedSymbol(Handle<Symbol>),
     SExprTypeCheckError(Handle<Symbol>),
@@ -17,19 +16,19 @@ pub enum SyntaxMatchError {
 pub enum CompilerError<T> {
     ParseError(T),
     SyntaxMatchError(SyntaxMatchError),
-	RepeatedModule(Handle<Symbol>),
+    RepeatedModule(Handle<Symbol>),
     RepeatedMacro(Handle<Symbol>),
-	RepeatedFunction(Handle<Symbol>),
-	FileOpenError(Handle<String>),
+    RepeatedFunction(Handle<Symbol>),
+    FileOpenError(Handle<String>),
 }
 
 #[derive(Debug)]
 pub enum RuntimeError {
     SymbolNotFound(Symbol),
     SyntaxError(SyntaxMatchError),
-	CondIsNotBoolean(Handle<Symbol>),
+    CondIsNotBoolean(Handle<Symbol>),
     FrameStackIsEmpty,
     ModuleIsNotValue,
-	FunctionCallIsEmpty,
-	CalleeIsNotCallable,
+    FunctionCallIsEmpty,
+    CalleeIsNotCallable,
 }

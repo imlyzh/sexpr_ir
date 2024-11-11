@@ -1,27 +1,26 @@
 pub mod constant;
-pub mod symbol;
 pub mod list;
+pub mod symbol;
 
-use std::{collections::HashMap, fmt::{Debug, Display}, sync::Arc};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::{
+    collections::HashMap,
+    fmt::{Debug, Display},
+    sync::Arc,
+};
 
 use self::{constant::Constant, list::List, symbol::Symbol};
 
 pub type Handle<T> = Arc<T>;
 
-
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum GAst {
     Const(Constant),
     List(Handle<List>),
 }
 
-
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Serialize, Deserialize)]
-pub struct Record (pub HashMap<Handle<Symbol>, GAst>);
-
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Record(pub HashMap<Handle<Symbol>, GAst>);
 
 impl Display for GAst {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

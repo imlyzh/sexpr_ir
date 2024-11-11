@@ -1,11 +1,9 @@
+use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-use serde::{Serialize, Deserialize};
 
 use super::GAst;
 
-
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct List(pub Vec<GAst>, pub Option<GAst>);
 
 impl Display for List {

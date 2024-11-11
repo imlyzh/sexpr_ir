@@ -1,12 +1,10 @@
+use serde::{Deserialize, Serialize};
 use std::{fmt::Display, hash::Hash};
-use serde::{Serialize, Deserialize};
 
 use super::Handle;
-use crate::utils::string_intern;
+// use crate::utils::string_intern;
 
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Location {
     pub path: Handle<String>,
     pub line: usize,
@@ -16,22 +14,25 @@ pub struct Location {
 
 impl Location {
     pub fn new(path: Handle<String>, line: usize, colum: usize, pos: usize) -> Self {
-        Self { path, line, colum, pos }
+        Self {
+            path,
+            line,
+            colum,
+            pos,
+        }
     }
 }
 
-
-#[derive(Debug, Clone, Eq)]
-#[derive(Serialize, Deserialize)]
-pub struct Symbol (pub Handle<String>, pub Location);
+#[derive(Debug, Clone, Eq, Serialize, Deserialize)]
+pub struct Symbol(pub Handle<String>, pub Location);
 
 impl Symbol {
     pub fn new(i: &str) -> Self {
-        Symbol (string_intern(i), Location::default())
+        Symbol(Handle::new(i.to_owned()), Location::default())
     }
 
     pub fn from(i: &str, pos: &Location) -> Self {
-        Symbol (string_intern(i), pos.clone())
+        Symbol(Handle::new(i.to_owned()), pos.clone())
     }
 }
 

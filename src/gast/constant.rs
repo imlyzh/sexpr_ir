@@ -1,12 +1,10 @@
 use std::fmt::Display;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-use super::{Handle, symbol::Symbol};
+use super::{symbol::Symbol, Handle};
 
-
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Constant {
     Nil,
     Bool(bool),
@@ -43,7 +41,7 @@ impl Constant {
     impl_is_type!(is_str, Str);
     impl_is_type!(is_sym, Sym);
     pub fn is_nil(&self) -> bool {
-		matches!(self, Self::Nil)
+        matches!(self, Self::Nil)
     }
 }
 
@@ -56,6 +54,10 @@ impl Constant {
     impl_get_item!(get_str, Str, Handle<String>);
     impl_get_item!(get_sym, Sym, Handle<Symbol>);
     pub fn get_nil(&self) -> Option<()> {
-        if self.is_nil() { Some(()) } else { None }
+        if self.is_nil() {
+            Some(())
+        } else {
+            None
+        }
     }
 }
